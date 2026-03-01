@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
- 
+
 import '../../../data/repositories/songs/song_repository.dart';
 import '../../../model/songs/song.dart';
 import '../../states/player_state.dart';
+import '../../states/settings_state.dart';
 import '../../theme/theme.dart';
 
 class LibraryScreen extends StatelessWidget {
@@ -11,20 +12,24 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1- Read the global song repository
+      // 1- Read the global song repository
+    final themeColor = context.watch<AppSettingsState>().theme;
     SongRepository songRepository = context.read<SongRepository>();
     List<Song> songs = songRepository.fetchSongs();
- 
+
     // 3 - Watch the global player state
-    PlayerState playerState = context.watch<PlayerState>();
+    PlayerState playerState = context.read<PlayerState>();
 
     return Container(
-    
+      color: themeColor.backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 16),
-          Text("Library", style: AppTextStyles.heading),
+          Text(
+            "Library",
+            style: AppTextStyles.heading,
+          ),
 
           SizedBox(height: 50),
 
@@ -34,7 +39,7 @@ class LibraryScreen extends StatelessWidget {
               itemBuilder: (context, index) => SongTile(
                 song: songs[index],
                 isPlaying: playerState.currentSong == songs[index],
-                onTap: () {
+                  onTap: () {
                   playerState.start(songs[index]);
                 },
               ),
